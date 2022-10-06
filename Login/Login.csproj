@@ -6,4 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Styles" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\css\login.css" />
+    </ItemGroup>
+
 </Project>
