@@ -1,6 +1,12 @@
+using AutoMapper;
+using Login.Controllers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Login.Data;
+using Login.DbContext;
+using Login.Hashing;
+using Login.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddDbContext<LoginDbContext>((provider, opt) => opt.UseSqlServer("Name=DefaultConnection"));
+builder.Services.AddControllers();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 var app = builder.Build();
 
@@ -24,6 +34,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseEndpoints( endpoints => endpoints.MapControllers());
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

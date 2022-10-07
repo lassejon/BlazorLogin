@@ -7,11 +7,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Styles" />
+      <None Include="wwwroot\css\login.css" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="wwwroot\css\login.css" />
+      <PackageReference Include="AutoMapper" Version="12.0.0" />
+      <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0-rc.1.22426.7" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0-rc.1.22426.7">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
     </ItemGroup>
 
 </Project>
