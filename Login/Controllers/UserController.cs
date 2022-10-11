@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using System.Web.Http;
 using AutoMapper;
 using Login.DbContext;
 using Login.Dtos;
@@ -14,71 +16,73 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Login.Controllers
 {
-    [Route("api/[controller]")]
+    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private readonly LoginDbContext _loginDbContext;
-        private readonly IPasswordHasher _passwordHasher;
-        private readonly IMapper _mapper;
+        private readonly IUserRepository _repository;
 
-        public UserController(LoginDbContext loginDbContext, IPasswordHasher passwordHasher, IMapper mapper)
+        public UserController(LoginDbContext loginDbContext, IUserRepository repository)
         {
             _loginDbContext = loginDbContext;
-            _passwordHasher = passwordHasher;
-            _mapper = mapper;
+            _repository = repository;
         }
 
-        [HttpDelete]
-        public async Task<User?> DeleteUser(int id)
+        [Microsoft.AspNetCore.Mvc.HttpDelete]
+        public async Task<ActionResult<User>> DeleteUser(int id)
         {
-            var user = new User { Id = id };
+            User user;
+            
+            try
+            {
+                user = await _repository.DeleteUser(id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
             _loginDbContext.Users.Remove(user);
             await _loginDbContext.SaveChangesAsync();
 
-            return user;
+            return Ok(user);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser([FromBody]CreateUserDto userDto)
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        public async Task<ActionResult<User>> PostUser([Microsoft.AspNetCore.Mvc.FromBody]CreateUserDto userDto)
         {
-            var user = _mapper.Map<User>(userDto);
-            user.Created = DateTime.Now;
-            user.PasswordHash = _passwordHasher.Hash(userDto.Password);
-                
-            await _loginDbContext.Users.AddAsync(user);
-            await _loginDbContext.SaveChangesAsync();
+            var user = await _repository.CreateUser(userDto);
 
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
-        [HttpGet("login")]
-        public async Task<ActionResult<bool>> IsPasswordCorrect([FromBody] LoginUserDto userDto)
+        [Microsoft.AspNetCore.Mvc.HttpGet("login")]
+        public async Task<ActionResult<LoginUserResponseDto>> IsPasswordCorrect([Microsoft.AspNetCore.Mvc.FromBody] LoginUserDto userDto)
         {
-            var user = await _loginDbContext.Users.FirstOrDefaultAsync(u => userDto.Email == u!.Email);
+            var user = await _repository.LoginUser(userDto);
 
-            if (user == null) return NotFound(false);
-            
-            var (verified, needsUpgrade) = _passwordHasher.Check(user.PasswordHash, userDto.Password);
-            
+            if (user == null) return NotFound();
+
             // todo: if needsUpgrade call _passwordHasher.UpgradeHash
-            return Ok(verified);
+            return Ok(user);
         }
 
-        [HttpGet("{id:int}")]
+        [Microsoft.AspNetCore.Mvc.HttpGet("{id:int}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _loginDbContext.Users.FindAsync(id);
+            var user = await _repository.GetUser(id);
             
             return user != null ? Ok(user) : NotFound(user);
         }
 
-        [HttpGet("all")]
+        [Microsoft.AspNetCore.Mvc.HttpGet("all")]
         public ActionResult<User?[]> GetUsers()
         {
             // return new[]
             //     { new User() { Created = DateTime.Now, Email = "a@d.ck", Id = 10, Name = "Test", PasswordHash = "asd" } };
-            return _loginDbContext.Users.ToArray();
+            return _repository.GetUsers();
         }
     }
 }
