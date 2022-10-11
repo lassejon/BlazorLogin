@@ -1,8 +1,8 @@
-﻿@page "/"
+@page "/Profile"
 @inject NavigationManager navMan
 @using Microsoft.AspNetCore.Http.Extensions
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Profile</PageTitle>
 
 <h1>Hello, world!</h1>
 
@@ -27,12 +27,12 @@ Welcome to your new app.
 				<div class="login__field">
 					<i class="login__icon fas fa-lock"></i>
 					<input type="password" class="login__input" placeholder="Password">
-				</div>			
-			</form>
-			<button class="button login__submit" @onclick="TryLogin">
-					<span class="button__text">Log In Now</span>
+				</div>
+				<button class="button login__submit" @onclick="Logout">
+					<span class="button__text">Log out</span>
 					<i class="button__icon fas fa-chevron-right"></i>
-			</button>	
+				</button>				
+			</form>
 			<div class="social-login">
 				<h3>log in via</h3>
 				<div class="social-icons">
@@ -55,8 +55,8 @@ Welcome to your new app.
 
 @code
 {
-	private void TryLogin() {
-		navMan.NavigateTo("Profile");
+	private void Logout() {
+		navMan.NavigateTo("/");
 	}
 	
 }
