@@ -1,6 +1,9 @@
 ﻿@page "/"
 @inject NavigationManager navMan
+@inject IUserRepository repo
 @using Microsoft.AspNetCore.Http.Extensions
+@using Login.Interfaces
+@using Login.Dtos
 
 <PageTitle>Index</PageTitle>
 
@@ -22,11 +25,11 @@ Welcome to your new app.
 			<form class="login">
 				<div class="login__field">
 					<i class="login__icon fas fa-user"></i>
-					<input type="text" class="login__input" placeholder="User name / Email">
+					<input type="text" class="login__input" placeholder="User name / Email" @bind="_email" @oninput="OnEmailEvent">
 				</div>
 				<div class="login__field">
 					<i class="login__icon fas fa-lock"></i>
-					<input type="password" class="login__input" placeholder="Password">
+					<input type="password" class="login__input" placeholder="Password" @bind="_password" @oninput="OnPasswordEvent">
 				</div>			
 			</form>
 			<button class="button login__submit" @onclick="TryLogin">
@@ -55,8 +58,32 @@ Welcome to your new app.
 
 @code
 {
-	private void TryLogin() {
-		navMan.NavigateTo("Profile");
-	}
+	private string? _email;
+	private string? _password;
 	
+	
+	private async Task TryLogin()
+	{
+		var loginRequest = new LoginUserDto() { Email = _email, Password = _password };
+		var loginResponse = await repo.LoginUser(loginRequest);
+		
+		if (loginResponse!.Verified)
+		{
+			navMan.NavigateTo("Profile");
+		}
+		else
+		{
+			Console.WriteLine("Email and/or password is not correct!");
+		}
+	}
+
+	private void OnEmailEvent(ChangeEventArgs obj)
+	{
+		_email = (string) obj.Value!;
+	}
+
+	private void OnPasswordEvent(ChangeEventArgs obj)
+	{
+		_password = (string) obj.Value!;
+	}
 }

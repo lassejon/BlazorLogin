@@ -43,9 +43,6 @@ namespace Login.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-            
-            _loginDbContext.Users.Remove(user);
-            await _loginDbContext.SaveChangesAsync();
 
             return Ok(user);
         }
@@ -54,6 +51,11 @@ namespace Login.Controllers
         public async Task<ActionResult<User>> PostUser([Microsoft.AspNetCore.Mvc.FromBody]CreateUserDto userDto)
         {
             var user = await _repository.CreateUser(userDto);
+
+            if (user == null)
+            {
+                return BadRequest("Email exists in db");
+            }
 
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }

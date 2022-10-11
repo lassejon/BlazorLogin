@@ -9,5 +9,5 @@ public interface IUserRepository
     public Task<User?> GetUser(int id);
     public User[] GetUsers();
     public Task<LoginUserResponseDto?> LoginUser(LoginUserDto userDto);
-    public Task<User> CreateUser(CreateUserDto userDto);
+    public Task<User?> CreateUser(CreateUserDto userDto);
 }

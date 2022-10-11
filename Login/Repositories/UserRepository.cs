@@ -63,8 +63,15 @@ public class UserRepository : IUserRepository
         return userResponse;
     }
 
-    public async Task<User> CreateUser(CreateUserDto userDto)
+    public async Task<User?> CreateUser(CreateUserDto userDto)
     {
+        var userEmail = ((await _loginDbContext.Users.FirstOrDefaultAsync(u => userDto.Email == u!.Email))!).Email;
+        
+        if (userEmail != null)
+        {
+            return null;
+        }
+        
         var user = _mapper.Map<User>(userDto);
         user.Created = DateTime.Now;
         user.PasswordHash = _passwordHasher.Hash(userDto.Password);
