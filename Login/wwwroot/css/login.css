@@ -176,3 +176,22 @@ body {
 .social-login__icon:hover {
     transform: scale(1.5);
 }
+
+/* create user styling */
+
+#create-user {
+    padding-top: 75px;
+}
+
+.more-buttons {
+    margin: 50px;
+}
+
+
+/* user profile styling */
+
+.user-profile {
+    margin: 50px;
+    padding-top: 50px;
+    font-weight: 700;
+}
