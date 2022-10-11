@@ -1,89 +1,11 @@
 ﻿@page "/"
-@inject NavigationManager navMan
-@inject IUserRepository repo
-@using Microsoft.AspNetCore.Http.Extensions
-@using Login.Interfaces
-@using Login.Dtos
+@inject NavigationManager NaviationManager
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
-
-
-
-Welcome to your new app.
-<head>
-  <meta charset="UTF-8">
-  <title>CodePen - A Pen by Mohithpoojary</title>
-  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css'>
-  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css'>
-  <link rel="stylesheet" href="./css/login.css">
-</head>
-<div class="container">
-	<div class="screen">
-		<div class="screen__content">
-			<form class="login">
-				<div class="login__field">
-					<i class="login__icon fas fa-user"></i>
-					<input type="text" class="login__input" placeholder="User name / Email" @bind="_email" @oninput="OnEmailEvent">
-				</div>
-				<div class="login__field">
-					<i class="login__icon fas fa-lock"></i>
-					<input type="password" class="login__input" placeholder="Password" @bind="_password" @oninput="OnPasswordEvent">
-				</div>			
-			</form>
-			<button class="button login__submit" @onclick="TryLogin">
-					<span class="button__text">Log In Now</span>
-					<i class="button__icon fas fa-chevron-right"></i>
-			</button>	
-			<div class="social-login">
-				<h3>log in via</h3>
-				<div class="social-icons">
-					<a href="#" class="social-login__icon fab fa-instagram"></a>
-					<a href="#" class="social-login__icon fab fa-facebook"></a>
-					<a href="#" class="social-login__icon fab fa-twitter"></a>
-				</div>
-			</div>
-		</div>
-		<div class="screen__background">
-			<span class="screen__background__shape screen__background__shape4"></span>
-			<span class="screen__background__shape screen__background__shape3"></span>		
-			<span class="screen__background__shape screen__background__shape2"></span>
-			<span class="screen__background__shape screen__background__shape1"></span>
-		</div>		
-	</div>
-</div>
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+<SignIn></SignIn>
 
 @code
 {
-	private string? _email;
-	private string? _password;
 	
-	
-	private async Task TryLogin()
-	{
-		var loginRequest = new LoginUserDto() { Email = _email, Password = _password };
-		var loginResponse = await repo.LoginUser(loginRequest);
-		
-		if (loginResponse!.Verified)
-		{
-			navMan.NavigateTo("Profile");
-		}
-		else
-		{
-			Console.WriteLine("Email and/or password is not correct!");
-		}
-	}
-
-	private void OnEmailEvent(ChangeEventArgs obj)
-	{
-		_email = (string) obj.Value!;
-	}
-
-	private void OnPasswordEvent(ChangeEventArgs obj)
-	{
-		_password = (string) obj.Value!;
-	}
 }

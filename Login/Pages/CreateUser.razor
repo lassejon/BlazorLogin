@@ -1,4 +1,8 @@
 @page "/CreateUser"
+@inject IUserRepository Repository
+@using Login.Dtos
+@using Login.Interfaces
+@using Login.Models
 
 <PageTitle> Create User</PageTitle>
 
@@ -9,41 +13,76 @@
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css'>
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css'>
     <link rel="stylesheet" href="./css/login.css">
-  </head>
-  <body>
-  <div class="container">
-      <div class="screen">
-          <div class="screen__content">
-              <form class="login">
-                  <div class="login__field">
-                      <i class="login__icon fas fa-user"></i>
-                      <input type="text" class="login__input" placeholder="Name">
-                  </div>
-                  <div class="login__field">
-                      <i class="login__icon fas fa-user"></i>
-                      <input type="text" class="login__input" placeholder="E-mail">
-                  </div>
-                  <div class="login__field">
-                      <i class="login__icon fas fa-lock"></i>
-                      <input type="password" class="login__input" placeholder="Password">
-                  </div>
-                  <button class="button login__submit">
-                      <span class="button__text">Create User</span>
-                      <i class="button__icon fas fa-chevron-right"></i>
-                  </button>				
-              </form>
-              <div class="social-login">
+</head>
+<body>
+<div class="container">
+    <div class="screen">
+        <div class="screen__content">
+            <form class="login">
+                <div class="login__field">
+                    <i class="login__icon fas fa-user"></i>
+                    <input type="text" class="login__input" placeholder="Name" @bind="_createUserDto.Name" @oninput="OnNameEvent">
+                </div>
+                <div class="login__field">
+                    <i class="login__icon fas fa-user"></i>
+                    <input type="text" class="login__input" placeholder="E-mail" @bind="_createUserDto.Email" @oninput="OnEmailEvent">
+                </div>
+                <div class="login__field">
+                    <i class="login__icon fas fa-lock"></i>
+                    <input type="password" class="login__input" placeholder="Password" @bind="_createUserDto.Password" @oninput="OnPasswordEvent">
+                </div>
+                <button class="button login__submit" @onclick="OnCreateEvent">
+                    <span class="button__text">Create User</span>
+                    <i class="button__icon fas fa-chevron-right"></i>
+                </button>				
+            </form>
+            <div class="social-login">
                   
 
-              </div>
-          </div>
-          <div class="screen__background">
-              <span class="screen__background__shape screen__background__shape4"></span>
-              <span class="screen__background__shape screen__background__shape3"></span>		
-              <span class="screen__background__shape screen__background__shape2"></span>
-              <span class="screen__background__shape screen__background__shape1"></span>
-          </div>		
-      </div>
-  </div>
+            </div>
+        </div>
+        <div class="screen__background">
+            <span class="screen__background__shape screen__background__shape4"></span>
+            <span class="screen__background__shape screen__background__shape3"></span>		
+            <span class="screen__background__shape screen__background__shape2"></span>
+            <span class="screen__background__shape screen__background__shape1"></span>
+        </div>		
+    </div>
+</div>
 </body>
 </html>
+
+@code
+{
+    private readonly CreateUserDto _createUserDto = new();
+    private User? _createdUser;
+
+    private async Task OnCreateEvent()
+    {
+        _createdUser = await Repository.CreateUser(_createUserDto);
+
+        if (_createdUser == null)
+        {
+            Console.WriteLine("User not created");
+        }
+        else
+        {
+            Console.WriteLine($"Created user {_createdUser}");
+        }
+    }
+    
+    private void OnNameEvent(ChangeEventArgs obj)
+    {
+        _createUserDto.Name = (string) obj.Value!;
+    }
+    
+    private void OnEmailEvent(ChangeEventArgs obj)
+    {
+        _createUserDto.Email = (string) obj.Value!;
+    }
+
+    private void OnPasswordEvent(ChangeEventArgs obj)
+    {
+        _createUserDto.Password = (string) obj.Value!;
+    }
+}

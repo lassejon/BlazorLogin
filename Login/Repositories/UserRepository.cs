@@ -65,9 +65,9 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> CreateUser(CreateUserDto userDto)
     {
-        var userEmail = ((await _loginDbContext.Users.FirstOrDefaultAsync(u => userDto.Email == u!.Email))!).Email;
+        var existingUser = await _loginDbContext.Users.FirstOrDefaultAsync(u => userDto.Email == u!.Email);
         
-        if (userEmail != null)
+        if (existingUser != null)
         {
             return null;
         }
